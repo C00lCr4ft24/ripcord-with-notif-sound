@@ -22,9 +22,18 @@ typedef WRITE_DATAGRAM(WriteDatagramType);
 #define ERF_MAP_FIND(name) u8 name(void* map, const char* key, u64 key_size, ErfMapAny* out)
 typedef ERF_MAP_FIND(ErfMapFindType);
 
-static ReadVoicePacketType* read_voice_packet_orig;
-static WriteDatagramType*   write_datagram_orig;
-static ErfMapFindType*      erf_map_find_orig;
+#define QAPPLICATION_ALERT(name) void name(void* widget, int msec)
+typedef QAPPLICATION_ALERT(QApplicationAlertType);
+
+static ReadVoicePacketType*   read_voice_packet_orig;
+static WriteDatagramType*     write_datagram_orig;
+static ErfMapFindType*        erf_map_find_orig;
+static QApplicationAlertType* qapplication_alert_orig;
+
+static QAPPLICATION_ALERT(QApplicationAlertHook) {
+    PlaySoundA("Notification.IM", NULL, SND_ALIAS | SND_ASYNC);
+    qapplication_alert_orig(widget, msec);
+}
 
 static WRITE_DATAGRAM(WriteDatagramHook) {
     // NOTE(geni): Ripcord appears to send what is likely an old version of this packet, which *only some* Discord servers seem to respond to.
@@ -129,6 +138,8 @@ static u32 LoadHooks() {
     result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
     u64 write_datagram_addr = (u64) GetProcAddress(GetModuleHandleA("Qt5Network.dll"), "?writeDatagram@QUdpSocket@@QEAA_JPEBD_JAEBVQHostAddress@@G@Z");
     result &= CreateAndEnableHook(0, write_datagram_addr, (LPVOID) &WriteDatagramHook, (LPVOID*) &write_datagram_orig);
+    u64 qapplication_alert_addr = (u64) GetProcAddress(GetModuleHandleA("Qt5Widgets.dll"), "?alert@QApplication@@SAXPEAVQWidget@@H@Z");
+    result &= CreateAndEnableHook(0, qapplication_alert_addr, (LPVOID) &QApplicationAlertHook, (LPVOID*) &qapplication_alert_orig);
     result &= CreateAndEnableHook(rip_base, 0xB9690, (LPVOID) &ErfMapFindHook, (LPVOID*) &erf_map_find_orig);
 
     return result;
