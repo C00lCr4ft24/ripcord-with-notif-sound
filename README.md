@@ -1,4 +1,11 @@
 # ripcord-audio-hook
+
+This is a fork of [another project](https://github.com/u130b8/ripcord-audio-hook/tree/notification-sounds) that added the notification sound functionality, but that project kept the basic Windows notification sound, instead of using the original discord notification sound effect. This one uses just that.
+
+## Credits
+[@p0358](https://github.com/p0358) for writing [Northstar's `loader_wsock32_proxy`](https://github.com/R2Northstar/NorthstarLauncher/tree/main/loader_wsock32_proxy)  
+Huge thanks to [@u130b8](https://github.com/u130b8) for fixing image previews, and for the notification sound functionality
+
 Fixes Ripcord:
 1. reading RTP header extensions larger than 8 bytes as voice data, causing garbled audio in voice chats
 2. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
@@ -15,7 +22,3 @@ Download the DLL file from [the Releases page](https://github.com/geniiii/ripcor
 **If you don't know what you're doing, look at the Usage section above instead.**
 1. Install Visual Studio 2019 or newer
 2. Run `build.bat`
-
-## Credits
-[@p0358](https://github.com/p0358) for writing [Northstar's `loader_wsock32_proxy`](https://github.com/R2Northstar/NorthstarLauncher/tree/main/loader_wsock32_proxy)  
-[@u130b8](https://github.com/u130b8) for fixing image previews
